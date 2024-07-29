@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>EMI Conversion</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background-color: #f5f5f5;
+        margin: 0;
+        padding: 0;
+      }
+
+      form {
+      }
+
+      label {
+        font-size: 16px;
+        margin-right: 10px;
+      }
+
+      select {
+        font-size: 16px;
+        padding: 5px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+      }
+      .container {
+        width: 90%;
+        max-width: 500px;
+        margin: 20px auto;
+        background-color: #fff;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+      }
+      .header {
+        background-color: #ff6f00;
+        color: white;
+        padding: 15px;
+        text-align: center;
+        font-size: 18px;
+      }
+      .content {
+        padding: 20px;
+      }
+      .info {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 10px;
+      }
+      .info div {
+        flex: 1;
+        text-align: center;
+        padding: 10px;
+        background-color: #e0f7fa;
+        margin: 5px;
+        border-radius: 5px;
+        font-size: 14px;
+      }
+      .emi-calculation {
+        margin: 20px 0;
+      }
+      .emi-calculation div {
+        margin-bottom: 10px;
+      }
+      .emi-calculation label {
+        display: block;
+        font-weight: bold;
+        margin-bottom: 5px;
+      }
+      .emi-calculation input,
+      .emi-calculation select {
+        width: calc(100% - 22px);
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        box-sizing: border-box;
+      }
+      .terms {
+        display: flex;
+        align-items: center;
+        margin: 20px 0;
+      }
+      .terms input {
+        margin-right: 10px;
+      }
+      .terms a {
+        color: #ff6f00;
+        text-decoration: none;
+      }
+      .confirm-button {
+        background-color: #003366;
+        color: white;
+        border: none;
+        width: 100%;
+        padding: 15px;
+        font-size: 16px;
+        border-radius: 0 0 10px 10px;
+        cursor: pointer;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">Pre-Confirmation</div>
+      <div class="content">
+        <div class="info">
+          <div>Avail EMI facility till 30 days from transaction date</div>
+          <div>You can select up to 5 transactions to convert at once</div>
+        </div>
+        <div class="emi-calculation">
+          <div>
+            <label>Credit Card Selected</label>
+            <input type="text" value="5267318187975449" readonly />
+          </div>
+          <div>
+            <label>Total Outstanding Amount</label>
+            <input type="text" value="₹102569.84" readonly />
+          </div>
+          <div>
+            <label>No. of Transactions for EMI Conversion</label>
+            <input type="text" value="01" readonly />
+          </div>
+          <div>
+            <label>Rate of Interest</label>
+            <input type="text" value="45%" readonly />
+          </div>
+          <div>
+            <label>Processing Fee (6%)</label>
+            <input type="text" value="₹5805" readonly />
+          </div>
+          <div>
+            <label>Foreclosure Fee</label>
+            <input type="text" value="9%" readonly />
+          </div>
+          <div>
+            <label>Select EMI Tenure</label>
+            <select id="emiTenure" name="emiTenure">
+              <option value="3">3 Months</option>
+              <option value="6">6 Months</option>
+              <option value="9">9 Months</option>
+              <option value="12">12 Months</option>
+              <option value="18">18 Months</option>
+              <option value="24">24 Months</option>
+            </select>
+          </div>
+          <div>
+            <label>EMI Amount</label>
+            <select id="emiAmount" name="emiAmount">
+              <!-- Options will be populated by JavaScript -->
+            </select>
+          </div>
+        </div>
+        <div class="terms">
+          <input type="checkbox" required />
+          <span
+            >I have read <a href="#">Terms & Conditions</a> and I accept the
+            facility available at the discretion of ICICI Bank.</span
+          >
+        </div>
+        <button class="confirm-button">Confirm & Convert</button>
+      </div>
+    </div>
+    <script>
+      const emiTenure = document.getElementById("emiTenure");
+      const emiAmount = document.getElementById("emiAmount");
+
+    //   const emiOptions = {
+    //     3: ["₹13,339.21", "₹12,000.00", "₹11,000.00"],
+    //     6: ["₹6,669.60", "₹6,000.00", "₹5,500.00"],
+    //     9: ["₹4,446.40", "₹4,000.00", "₹3,500.00"],
+    //     12: ["₹3,334.80", "₹3,000.00", "₹2,750.00"],
+    //     18: ["₹2,223.20", "₹2,000.00", "₹1,833.33"],
+    //     24: ["₹1,667.40", "₹1,500.00", "₹1,375.00"],
+    //   };
+
+      const emiOptions = {
+        24: ["₹9,143.21"],
+        18: ["₹10,480.60"],
+        12: ["₹13,357.40"],
+        9: ["₹16,342.80"],
+        6: ["₹22,425.20"],
+        3: ["₹40,903.30"],
+      };
+
+      emiTenure.addEventListener("change", function () {
+        const selectedTenure = this.value;
+        const options = emiOptions[selectedTenure] || [];
+
+        // Clear previous options
+        emiAmount.innerHTML = "";
+
+        // Populate new options
+        options.forEach(function (amount) {
+          const option = document.createElement("option");
+          option.value = amount;
+          option.textContent = amount;
+          emiAmount.appendChild(option);
+        });
+      });
+
+      // Trigger change event on page load to set initial options
+      emiTenure.dispatchEvent(new Event("change"));
+    </script>
+  </body>
+</html>
