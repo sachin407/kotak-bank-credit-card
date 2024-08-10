@@ -11,6 +11,25 @@
         margin: 0;
         padding: 0;
       }
+      .details-button {
+        background-color: #003366;
+        color: white;
+        border: none;
+        padding: 12px 20px;
+        font-size: 16px;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s, transform 0.2s;
+      }
+
+      .details-button:hover {
+        background-color: #002244;
+      }
+
+      .details-button:focus {
+        outline: none;
+        transform: scale(1.05);
+      }
 
       form {
       }
@@ -26,6 +45,7 @@
         border: 1px solid #ccc;
         border-radius: 4px;
       }
+
       .container {
         width: 90%;
         max-width: 500px;
@@ -35,6 +55,7 @@
         box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         overflow: hidden;
       }
+
       .header {
         background-color: #ff6f00;
         color: white;
@@ -42,14 +63,17 @@
         text-align: center;
         font-size: 18px;
       }
+
       .content {
         padding: 20px;
       }
+
       .info {
         display: flex;
         justify-content: space-between;
         margin-bottom: 10px;
       }
+
       .info div {
         flex: 1;
         text-align: center;
@@ -59,17 +83,21 @@
         border-radius: 5px;
         font-size: 14px;
       }
+
       .emi-calculation {
         margin: 20px 0;
       }
+
       .emi-calculation div {
         margin-bottom: 10px;
       }
+
       .emi-calculation label {
         display: block;
         font-weight: bold;
         margin-bottom: 5px;
       }
+
       .emi-calculation input,
       .emi-calculation select {
         width: calc(100% - 22px);
@@ -78,18 +106,22 @@
         border-radius: 5px;
         box-sizing: border-box;
       }
+
       .terms {
         display: flex;
         align-items: center;
         margin: 20px 0;
       }
+
       .terms input {
         margin-right: 10px;
       }
+
       .terms a {
         color: #ff6f00;
         text-decoration: none;
       }
+
       .confirm-button {
         background-color: #003366;
         color: white;
@@ -99,6 +131,44 @@
         font-size: 16px;
         border-radius: 0 0 10px 10px;
         cursor: pointer;
+      }
+
+      /* Modal styles */
+      .modal {
+        display: none;
+        position: fixed;
+        z-index: 1000;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        background-color: rgba(0, 0, 0, 0.5);
+      }
+
+      .modal-content {
+        background-color: #fff;
+        margin: 15% auto;
+        padding: 20px;
+        border-radius: 5px;
+        width: 80%;
+        max-width: 500px;
+      }
+
+      .modal-close {
+        float: right;
+        font-size: 24px;
+        font-weight: bold;
+        cursor: pointer;
+      }
+
+      .modal-close:hover {
+        color: red;
+      }
+
+      .mail {
+        font-size: 15px;
+        color: green;
       }
     </style>
   </head>
@@ -138,6 +208,7 @@
           <div>
             <label>Select EMI Tenure</label>
             <select id="emiTenure" name="emiTenure">
+              <option value="2">Please select</option>
               <option value="3">3 Months</option>
               <option value="6">6 Months</option>
               <option value="9">9 Months</option>
@@ -160,12 +231,29 @@
             facility available at the discretion of Kotak Mahindra Bank.</span
           >
         </div>
-        <button class="confirm-button">Confirm & Convert</button>
+        <button class="confirm-button" id="confirmButton">
+          Confirm & Convert
+        </button>
       </div>
     </div>
+
+    <!-- Modal -->
+    <div id="successModal" class="modal">
+      <div class="modal-content">
+        <!-- <span class="modal-close" id="modalClose">&times;</span> -->
+        <h4 id="successText"></h4>
+        <h6 class="mail">Your EMI Details Sent To Your Regestered Mail</h6>
+        <button id="modalClose" class="details-button">Ok</button>
+      </div>
+    </div>
+
     <script>
       const emiTenure = document.getElementById("emiTenure");
       const emiAmount = document.getElementById("emiAmount");
+      const confirmButton = document.getElementById("confirmButton");
+      const successModal = document.getElementById("successModal");
+      const successText = document.getElementById("successText");
+      const modalClose = document.getElementById("modalClose");
 
       const emiOptions = {
         24: ["₹10,643.21"],
@@ -174,6 +262,7 @@
         9: ["₹17,780.80"],
         6: ["₹23,960.20"],
         3: ["₹41,812.30"],
+        2: ["Please select"],
       };
 
       emiTenure.addEventListener("change", function () {
@@ -190,6 +279,31 @@
           option.textContent = amount;
           emiAmount.appendChild(option);
         });
+      });
+
+      confirmButton.addEventListener("click", function () {
+        const selectedTenure = emiTenure.value;
+        const selectedAmount = emiAmount.value;
+
+        if (selectedTenure === "2" || selectedAmount === "Please select") {
+          alert("Please select a valid EMI Tenure and Amount.");
+          return;
+        }
+
+        successText.textContent = `Success! You have selected:
+        EMI Tenure: ${emiTenure.options[emiTenure.selectedIndex].text}
+        EMI Amount: ${selectedAmount}`;
+        successModal.style.display = "block";
+      });
+
+      modalClose.addEventListener("click", function () {
+        successModal.style.display = "none";
+      });
+
+      window.addEventListener("click", function (event) {
+        if (event.target === successModal) {
+          successModal.style.display = "none";
+        }
       });
 
       // Trigger change event on page load to set initial options
